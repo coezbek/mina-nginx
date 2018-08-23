@@ -40,7 +40,7 @@ namespace :nginx do
     command %(echo '#{erb nginx_template}' > #{nginx_config})
 
     comment %(Symlinking nginx config file to #{nginx_enabled_config})
-    command %(sudo ln -nfs #{nginx_config} #{nginx_enabled_config})
+    command %(sudo visudo ln -nfs #{nginx_config} #{nginx_enabled_config})
 
     invoke :'nginx:restart'
   end
@@ -49,7 +49,7 @@ namespace :nginx do
     desc "#{action.capitalize} Nginx"
     task action.to_sym => :remote_environment do
       comment %(#{action.capitalize} Nginx)
-      command "sudo service nginx #{action}"
+      command "sudo visudo service nginx #{action}"
     end
   end
 
