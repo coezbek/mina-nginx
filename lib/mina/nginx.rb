@@ -31,6 +31,12 @@ namespace :nginx do
     end
   end
 
+  desc 'Print nginx config on server in local terminal'
+  task print_remote: :remote_environment do
+    nginx_config = fetch :nginx_config
+    command %(cat #{nginx_config})
+  end
+
   desc 'Setup Nginx on server'
   task setup: :remote_environment do
     nginx_config = fetch :nginx_config
