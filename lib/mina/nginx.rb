@@ -1,7 +1,7 @@
 require 'mina/nginx/version'
 
 namespace :nginx do
-  application = fetch :application, 'application'
+  application = fetch :application_name, 'application'
 
   set :nginx_user,        'www-data'
   set :nginx_group,       'www-data'
@@ -11,7 +11,7 @@ namespace :nginx do
   set :nginx_socket_path, -> { "#{fetch(:shared_path)}/tmp/puma.sock" }
 
   desc 'Install Nginx config to repo'
-  task :install => :environment do
+  task :install do
     run :local do
       installed_path = path_for_template
 
@@ -25,14 +25,14 @@ namespace :nginx do
   end
 
   desc 'Print nginx config in local terminal'
-  task :print => :environment do
+  task :print do
     run :local do
       command %(echo '#{erb nginx_template}')
     end
   end
 
   desc 'Setup Nginx on server'
-  task :setup => :environment do
+  task setup: :remote_environment do
     nginx_config = fetch :nginx_config
     nginx_enabled_config = fetch :nginx_config_e
 
@@ -47,7 +47,7 @@ namespace :nginx do
 
   %w(stop start restart reload status).each do |action|
     desc "#{action.capitalize} Nginx"
-    task action.to_sym => :environment do
+    task action.to_sym => :remote_environment do
       comment %(#{action.capitalize} Nginx)
       command "sudo service nginx #{action}"
     end

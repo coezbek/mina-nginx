@@ -1,4 +1,4 @@
-<% application = fetch :application_nam, 'application' %>
+<% application = fetch :application_name, 'application' %>
 <% socket_path = fetch :nginx_socket_path, '/path/to/web/socket' %>
 
 upstream <%= application %> {
