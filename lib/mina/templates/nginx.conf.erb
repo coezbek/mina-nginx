@@ -1,4 +1,4 @@
-<% application = fetch :application, 'application' %>
+<% application = fetch :application_nam, 'application' %>
 <% socket_path = fetch :nginx_socket_path, '/path/to/web/socket' %>
 
 upstream <%= application %> {
@@ -8,7 +8,7 @@ upstream <%= application %> {
 server {
   listen 80 default deferred;
   server_name <%= fetch :server_name, fetch(:domain) %>
-  root <%= "#{fetch :deploy_to}/#{fetch :current_path}/public" %>;
+  root <%= "#{fetch :current_path}/public" %>;
 
   location ^~ /assets/ {
     gzip_static on;
