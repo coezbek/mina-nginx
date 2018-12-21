@@ -1,16 +1,16 @@
-require 'mina/nginx/version'
+require "mina/nginx/version"
 
 namespace :nginx do
-  application = fetch :application_name, 'application'
+  application = fetch :application_name, "application"
 
-  set :nginx_user,        'www-data'
-  set :nginx_group,       'www-data'
-  set :nginx_path,        '/etc/nginx'
-  set :nginx_config,      -> { "#{fetch(:shared_path)}/config/nginx.conf" }
-  set :nginx_config_e,    -> { "#{fetch(:nginx_path)}/sites-enabled/#{application}.conf" }
+  set :nginx_user, "www-data"
+  set :nginx_group, "www-data"
+  set :nginx_path, "/etc/nginx"
+  set :nginx_config, -> { "#{fetch(:shared_path)}/config/nginx.conf" }
+  set :nginx_config_e, -> { "#{fetch(:nginx_path)}/sites-enabled/#{application}.conf" }
   set :nginx_socket_path, -> { "#{fetch(:shared_path)}/tmp/puma.sock" }
 
-  desc 'Install Nginx config to repo'
+  desc "Install Nginx config to repo"
   task :install do
     run :local do
       installed_path = path_for_template
@@ -24,21 +24,21 @@ namespace :nginx do
     end
   end
 
-  desc 'Print nginx config in local terminal'
+  desc "Print nginx config in local terminal"
   task :print do
     run :local do
       command %(echo '#{erb nginx_template}')
     end
   end
 
-  desc 'Print nginx config on server in local terminal'
-  task print_remote: :remote_environment do
+  desc "Print nginx config on server in local terminal"
+  task :print_remote do
     nginx_config = fetch :nginx_config
     command %(cat #{nginx_config})
   end
 
-  desc 'Setup Nginx on server'
-  task setup: :remote_environment do
+  desc "Setup Nginx on server"
+  task :setup do
     nginx_config = fetch :nginx_config
     nginx_enabled_config = fetch :nginx_config_e
 
@@ -53,7 +53,7 @@ namespace :nginx do
 
   %w(stop start restart reload status).each do |action|
     desc "#{action.capitalize} Nginx"
-    task action.to_sym => :remote_environment do
+    task action.to_sym do
       comment %(#{action.capitalize} Nginx)
       command "sudo visudo service nginx #{action}"
     end
@@ -68,9 +68,9 @@ namespace :nginx do
     File.exist?(installed_path) ? installed_path : template_path
   end
 
-  def path_for_template installed: true
+  def path_for_template(installed: true)
     installed ?
-      File.expand_path('./config/deploy/templates/nginx.conf.erb') :
-      File.expand_path('../templates/nginx.conf.erb', __FILE__)
+      File.expand_path("./config/deploy/templates/nginx.conf.erb") :
+      File.expand_path("../templates/nginx.conf.erb", __FILE__)
   end
 end
