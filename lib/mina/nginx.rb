@@ -1,20 +1,18 @@
 require "mina/nginx/version"
 
 namespace :nginx do
-  application = fetch :application_name, "application"
 
   set :nginx_user, "www-data"
   set :nginx_group, "www-data"
   set :nginx_path, "/etc/nginx"
   set :nginx_config, -> { "#{fetch(:shared_path)}/config/nginx.conf" }
-  set :nginx_config_e, -> { "#{fetch(:nginx_path)}/sites-enabled/#{application}.conf" }
+  set :nginx_config_e, -> { "#{fetch(:nginx_path)}/sites-enabled/#{fetch(:domain)}.conf" }
   set :nginx_socket_path, -> { "#{fetch(:shared_path)}/tmp/puma.sock" }
 
   desc "Install Nginx config to repo"
   task :install do
     run :local do
       installed_path = path_for_template
-
       if File.exist? installed_path
         error! %(file exists; please rm to continue: #{installed_path})
       else
