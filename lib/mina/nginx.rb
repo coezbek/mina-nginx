@@ -22,14 +22,14 @@ namespace :nginx do
     end
   end
 
-  desc "Print nginx config in local terminal"
+  desc "Print local nginx config from template in local terminal"
   task :print do
     run :local do
       command %(echo '#{erb nginx_template}')
     end
   end
 
-  desc "Print nginx config on server in local terminal"
+  desc "Print current nginx config on server in local terminal"
   task :print_remote do
     nginx_config = fetch :nginx_config
     command %(cat #{nginx_config})
